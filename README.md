@@ -25,10 +25,10 @@ with TextAssistant(credentials) as assistant:
 ## How to run
 
 ```sh
-$ python3 -m venv venv
-$ source venv/bin/activate
-$ pip3 install -r requirements.txt
+python3 -m venv venv
+source venv/bin/activate
+pip3 install -r requirements.txt
 
 # Run command line interactive tool
-$ python gassist_text/textinput.py
+python3 gassist_text/textinput.py
 ```
