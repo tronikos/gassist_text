@@ -22,13 +22,40 @@ with TextAssistant(credentials) as assistant:
     print(assistant.assist('another one')[0])
 ```
 
-## How to run
+## Limitations/Known issues
+
+- Most queries return an empty text response. However all return a non empty HTML response.
+
+If you have not registered a device and model:
+
+- Most queries for media controls don't work.
+  - not working: e.g. play music on kitchen speaker, stop kitchen speaker
+  - working: e.g. play news on kitchen speaker, play rain sounds on bedroom speaker
+- Routines don't work
+- Queries for personal results don't work
+
+## Development environment
 
 ```sh
-python3 -m venv venv
-source venv/bin/activate
-pip3 install -r requirements.txt
+python3 -m venv .venv
+source .venv/bin/activate
+# for Windows CMD:
+# .venv\Scripts\activate.bat
+# for Windows PowerShell:
+# .venv\Scripts\Activate.ps1
+
+# Install dependencies
+python -m pip install --upgrade pip
+python -m pip install flake8 pytest
+pip install -r requirements.txt
+
+# Run lint
+flake8 gassist_text tests --count --select=E9,F63,F7,F82 --show-source --statistics
+flake8 gassist_text tests --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+# Run tests
+pytest
 
 # Run command line interactive tool
-python3 gassist_text/textinput.py
+python gassist_text/textinput.py
 ```
