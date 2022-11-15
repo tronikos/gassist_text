@@ -38,8 +38,8 @@ def log_assist_response_without_audio(assist_response):
     if logging.getLogger().isEnabledFor(logging.DEBUG):
         resp_copy = embedded_assistant_pb2.AssistResponse()
         resp_copy.CopyFrom(assist_response)
-        has_audio_data = (resp_copy.HasField('audio_out') and
-                          len(resp_copy.audio_out.audio_data) > 0)
+        has_audio_data = (resp_copy.HasField('audio_out')
+                          and len(resp_copy.audio_out.audio_data) > 0)
         if has_audio_data:
             size = len(resp_copy.audio_out.audio_data)
             resp_copy.audio_out.ClearField('audio_data')
