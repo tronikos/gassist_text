@@ -1,5 +1,0 @@
-click>=2.0
-google-assistant-grpc==0.3.0
-google-auth<3,>=0.3.0
-protobuf<4,>=3.8.0
-requests<3,>=2.20.0

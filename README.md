@@ -46,16 +46,21 @@ source .venv/bin/activate
 
 # Install dependencies
 python -m pip install --upgrade pip
-python -m pip install flake8 pytest
-pip install -r requirements.txt
+python -m pip install .
 
 # Run lint
+python -m pip install flake8
 flake8 gassist_text tests --count --select=E9,F63,F7,F82 --show-source --statistics
 flake8 gassist_text tests --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
 # Run tests
+python -m pip install pytest
 pytest
 
 # Run command line interactive tool
 python gassist_text/textinput.py
+
+# Build package
+python -m pip install build
+python -m build
 ```
