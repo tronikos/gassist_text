@@ -48,6 +48,10 @@ source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install .
 
+# Generate embedded_assistant_pb2.py and embedded_assistant_pb2_grpc.py
+python -m pip install grpcio-tools
+python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. google/assistant/embedded/v1alpha2/embedded_assistant.proto
+
 # Run lint
 python -m pip install flake8
 flake8 gassist_text tests --count --select=E9,F63,F7,F82 --show-source --statistics

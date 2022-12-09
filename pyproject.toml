@@ -1,6 +1,6 @@
 [project]
 name = "gassist-text"
-version = "0.0.3"
+version = "0.0.4"
 authors = [
     { name="tronikos", email="tronikos@gmail.com" },
 ]
@@ -8,13 +8,11 @@ description = "A Python library for interacting with Google Assistant API via te
 readme = "README.md"
 requires-python = ">=3.7"
 dependencies = [
-    "google-assistant-grpc==0.3.0",
     "google-auth<3,>=0.3.0",
-    "protobuf<4,>=3.8.0",
+    "grpcio<2,>=1.50.0",
+    "protobuf<5,>=3.20.0",
     "requests<3,>=2.20.0",
 ]
-
-[dependencies]
 
 [project.urls]
 "Homepage" = "https://github.com/tronikos/gassist_text"
