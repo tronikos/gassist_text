@@ -54,8 +54,8 @@ python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. google/assist
 
 # Run lint
 python -m pip install flake8
-flake8 gassist_text tests --count --select=E9,F63,F7,F82 --show-source --statistics
-flake8 gassist_text tests --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+flake8 src/gassist_text tests demo.py browser_helpers.py --count --select=E9,F63,F7,F82 --show-source --statistics
+flake8 src/gassist_text tests demo.py browser_helpers.py --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
 # Run tests
 python -m pip install pytest
