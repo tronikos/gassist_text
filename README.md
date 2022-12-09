@@ -58,7 +58,8 @@ python -m pip install pytest
 pytest
 
 # Run command line interactive tool
-python gassist_text/textinput.py
+python -m pip install click
+python demo.py
 
 # Build package
 python -m pip install build

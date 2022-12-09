@@ -8,7 +8,6 @@ description = "A Python library for interacting with Google Assistant API via te
 readme = "README.md"
 requires-python = ">=3.7"
 dependencies = [
-    "click>=2.0",
     "google-assistant-grpc==0.3.0",
     "google-auth<3,>=0.3.0",
     "protobuf<4,>=3.8.0",
