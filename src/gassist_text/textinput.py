@@ -20,12 +20,14 @@
 # - Simplified constructor:
 #   - Added default values
 #   - Moved creation of the authorized gRPC channel in the constructor
+# - Parse HTML response
 # - Extracted command line tool to demo.py
 
 import google.auth.transport.grpc
 import google.auth.transport.requests
 import google.oauth2.credentials
 
+from bs4 import BeautifulSoup
 from google.assistant.embedded.v1alpha2 import (
     embedded_assistant_pb2,
     embedded_assistant_pb2_grpc
@@ -104,8 +106,7 @@ class TextAssistant(object):
             )
             # Continue current conversation with later requests.
             self.is_new_conversation = False
-            if self.display:
-                config.screen_out_config.screen_mode = PLAYING
+            config.screen_out_config.screen_mode = PLAYING
             req = embedded_assistant_pb2.AssistRequest(config=config)
             assistant_helpers.log_assist_request_without_audio(req)
             yield req
@@ -117,6 +118,9 @@ class TextAssistant(object):
             assistant_helpers.log_assist_response_without_audio(resp)
             if resp.screen_out.data:
                 html_response = resp.screen_out.data
+                soup = BeautifulSoup(html_response, "html.parser")
+                divs = soup.find_all("div", class_="show_text_content")
+                text_response = '\n'.join(map(lambda div : div.text, divs))
             if resp.dialog_state_out.conversation_state:
                 conversation_state = resp.dialog_state_out.conversation_state
                 self.conversation_state = conversation_state
