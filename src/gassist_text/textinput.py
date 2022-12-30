@@ -117,8 +117,9 @@ class TextAssistant(object):
                                           self.deadline):
             assistant_helpers.log_assist_response_without_audio(resp)
             if resp.screen_out.data:
-                html_response = resp.screen_out.data
-                soup = BeautifulSoup(html_response, "html.parser")
+                if self.display:
+                    html_response = resp.screen_out.data
+                soup = BeautifulSoup(resp.screen_out.data, "html.parser")
                 divs = soup.find_all("div", class_="show_text_content")
                 text_response = '\n'.join(map(lambda div : div.text, divs))
             if resp.dialog_state_out.conversation_state:
