@@ -24,8 +24,6 @@ with TextAssistant(credentials) as assistant:
 
 ## Limitations/Known issues
 
-- Most queries return an empty text response. However all return a non empty HTML response.
-
 If you have not registered a device and model:
 
 - Most queries for media controls don't work.
