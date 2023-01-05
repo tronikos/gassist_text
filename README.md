@@ -24,9 +24,8 @@ with TextAssistant(credentials) as assistant:
 
 ## Limitations/Known issues
 
-If you have not registered a device and model:
-
-- Most queries for media controls don't work.
+- Broadcast commands doesn't work unless speakers and device that runs this library are in the same network and IPv6 is disabled in the router
+- Most queries for media controls don't work
   - not working: e.g. play music on kitchen speaker, stop kitchen speaker
   - working: e.g. play news on kitchen speaker, play rain sounds on bedroom speaker
 - Routines don't work
