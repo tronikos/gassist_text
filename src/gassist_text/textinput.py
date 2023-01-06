@@ -125,7 +125,7 @@ class TextAssistant(object):
                     html_response = resp.screen_out.data
                 soup = BeautifulSoup(resp.screen_out.data, "html.parser")
                 divs = soup.find_all("div", id="assistant-card-content")
-                text_response = '\n'.join(map(lambda div : div.text, divs)).strip()
+                text_response = '\n'.join(map(lambda div: div.text, divs)).strip()
             if resp.dialog_state_out.conversation_state:
                 conversation_state = resp.dialog_state_out.conversation_state
                 self.conversation_state = conversation_state
