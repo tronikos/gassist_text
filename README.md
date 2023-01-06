@@ -61,7 +61,7 @@ pytest
 
 # Run command line interactive tool
 python -m pip install click
-python demo.py
+python demo.py --display --audio_out
 
 # Build package
 python -m pip install build

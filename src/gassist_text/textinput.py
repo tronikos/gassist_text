@@ -21,6 +21,7 @@
 #   - Added default values
 #   - Moved creation of the authorized gRPC channel in the constructor
 # - Parse HTML response
+# - Return audio response as mp3
 # - Extracted command line tool to demo.py
 
 import google.auth.transport.grpc
@@ -55,12 +56,14 @@ class TextAssistant(object):
       device_model_id: identifier of the device model.
       device_id: identifier of the registered device instance.
       display: enable visual display of assistant response.
+      audio_out: enable audio response.
       deadline_sec: gRPC deadline in seconds for Google Assistant API call.
       api_endpoint: Address of Google Assistant API service.
     """
 
     def __init__(self, credentials, language_code='en-US', device_model_id='default', device_id='default',
-                 display=False, deadline_sec=DEFAULT_GRPC_DEADLINE, api_endpoint=ASSISTANT_API_ENDPOINT):
+                 display=False, audio_out=False,
+                 deadline_sec=DEFAULT_GRPC_DEADLINE, api_endpoint=ASSISTANT_API_ENDPOINT):
         self.language_code = language_code
         self.device_model_id = device_model_id
         self.device_id = device_id
@@ -68,6 +71,7 @@ class TextAssistant(object):
         # Force reset of first conversation.
         self.is_new_conversation = True
         self.display = display
+        self.audio_out = audio_out
         # Create an authorized gRPC channel.
         channel = google.auth.transport.grpc.secure_authorized_channel(
             credentials, google.auth.transport.requests.Request(), api_endpoint)
@@ -84,14 +88,13 @@ class TextAssistant(object):
             return False
 
     def assist(self, text_query):
-        """Send a text request to the Assistant and playback the response.
-        """
+        """Send a text request to the Assistant and return the response as a tuple of: [text, html, audio]."""
         def iter_assist_requests():
             config = embedded_assistant_pb2.AssistConfig(
                 audio_out_config=embedded_assistant_pb2.AudioOutConfig(
-                    encoding='LINEAR16',
-                    sample_rate_hertz=16000,
-                    volume_percentage=0,
+                    encoding='MP3',
+                    sample_rate_hertz=24000,
+                    volume_percentage=100,
                 ),
                 dialog_state_in=embedded_assistant_pb2.DialogStateIn(
                     language_code=self.language_code,
@@ -113,6 +116,7 @@ class TextAssistant(object):
 
         text_response = None
         html_response = None
+        audio_response = b''
         for resp in self.assistant.Assist(iter_assist_requests(),
                                           self.deadline):
             assistant_helpers.log_assist_response_without_audio(resp)
@@ -120,11 +124,13 @@ class TextAssistant(object):
                 if self.display:
                     html_response = resp.screen_out.data
                 soup = BeautifulSoup(resp.screen_out.data, "html.parser")
-                divs = soup.find_all("div", class_="show_text_content")
-                text_response = '\n'.join(map(lambda div : div.text, divs))
+                divs = soup.find_all("div", id="assistant-card-content")
+                text_response = '\n'.join(map(lambda div : div.text, divs)).strip()
             if resp.dialog_state_out.conversation_state:
                 conversation_state = resp.dialog_state_out.conversation_state
                 self.conversation_state = conversation_state
             if resp.dialog_state_out.supplemental_display_text:
                 text_response = resp.dialog_state_out.supplemental_display_text
-        return text_response, html_response
+            if self.audio_out and resp.audio_out.audio_data:
+                audio_response += resp.audio_out.audio_data
+        return text_response, html_response, audio_response

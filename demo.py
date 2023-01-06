@@ -47,14 +47,17 @@ DEFAULT_GRPC_DEADLINE = 60 * 3 + 5
               help='Language code of the Assistant')
 @click.option('--display', is_flag=True, default=False,
               help='Enable visual display of Assistant responses in HTML.')
+@click.option('--audio_out', is_flag=True, default=False,
+              help='Enable audio response.')
 @click.option('--verbose', '-v', is_flag=True, default=False,
               help='Verbose logging.')
 @click.option('--grpc-deadline', default=DEFAULT_GRPC_DEADLINE,
               metavar='<grpc deadline>', show_default=True,
               help='gRPC deadline in seconds')
 def main(api_endpoint, credentials,
-         device_model_id, device_id, lang, display, verbose,
+         device_model_id, device_id, lang, display, audio_out, verbose,
          grpc_deadline, *args, **kwargs):
+    system_browser = browser_helpers.system_browser
     # Setup logging.
     logging.basicConfig(level=logging.DEBUG if verbose else logging.INFO)
 
@@ -71,17 +74,18 @@ def main(api_endpoint, credentials,
                       'new OAuth 2.0 credentials.')
         return
 
-    with TextAssistant(credentials, lang, device_model_id, device_id, display,
+    with TextAssistant(credentials, lang, device_model_id, device_id, display, audio_out,
                        grpc_deadline, api_endpoint) as assistant:
         while True:
             query = click.prompt('')
             click.echo('<you> %s' % query)
-            response_text, response_html = assistant.assist(text_query=query)
-            if display and response_html:
-                system_browser = browser_helpers.system_browser
-                system_browser.display(response_html)
+            response_text, response_html, audio_response = assistant.assist(text_query=query)
             if response_text:
                 click.echo('<@assistant> %s' % response_text)
+            if response_html:
+                system_browser.display(response_html, 'google-assistant-sdk-screen-out.html')
+            if audio_response:
+                system_browser.display(audio_response, 'google-assistant-sdk-audio-out.mp3')
 
 
 if __name__ == '__main__':
