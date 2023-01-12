@@ -27,6 +27,7 @@
 import google.auth.transport.grpc
 import google.auth.transport.requests
 import google.oauth2.credentials
+import re
 
 from bs4 import BeautifulSoup
 from google.assistant.embedded.v1alpha2 import (
@@ -124,8 +125,10 @@ class TextAssistant(object):
                 if self.display:
                     html_response = resp.screen_out.data
                 soup = BeautifulSoup(resp.screen_out.data, "html.parser")
-                divs = soup.find_all("div", id="assistant-card-content")
-                text_response = '\n'.join(map(lambda div: div.text, divs)).strip()
+                card_content = soup.find("div", id="assistant-card-content")
+                if card_content:
+                    card_content = BeautifulSoup(card_content.prettify(), "html.parser")
+                    text_response = re.sub(r"\s+", ' ', card_content.text.strip())
             if resp.dialog_state_out.conversation_state:
                 conversation_state = resp.dialog_state_out.conversation_state
                 self.conversation_state = conversation_state
