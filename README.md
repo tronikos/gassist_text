@@ -47,7 +47,7 @@ python -m pip install .
 
 # Generate embedded_assistant_pb2.py and embedded_assistant_pb2_grpc.py
 python -m pip install grpcio-tools
-python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. google/assistant/embedded/v1alpha2/embedded_assistant.proto
+python -m grpc_tools.protoc -Isrc --python_out=src --grpc_python_out=src src/google/assistant/embedded/v1alpha2/embedded_assistant.proto
 
 # Run lint
 python -m pip install flake8
@@ -59,7 +59,7 @@ python -m pip install pytest
 pytest
 
 # Run command line interactive tool
-python -m pip install click
+python -m pip install click beautifulsoup4
 python demo.py --display --audio_out
 
 # Build package

@@ -20,16 +20,13 @@
 # - Simplified constructor:
 #   - Added default values
 #   - Moved creation of the authorized gRPC channel in the constructor
-# - Parse HTML response
 # - Return audio response as mp3
 # - Extracted command line tool to demo.py
 
 import google.auth.transport.grpc
 import google.auth.transport.requests
 import google.oauth2.credentials
-import re
 
-from bs4 import BeautifulSoup
 from google.assistant.embedded.v1alpha2 import (
     embedded_assistant_pb2,
     embedded_assistant_pb2_grpc
@@ -110,7 +107,8 @@ class TextAssistant(object):
             )
             # Continue current conversation with later requests.
             self.is_new_conversation = False
-            config.screen_out_config.screen_mode = PLAYING
+            if self.display:
+                config.screen_out_config.screen_mode = PLAYING
             req = embedded_assistant_pb2.AssistRequest(config=config)
             assistant_helpers.log_assist_request_without_audio(req)
             yield req
@@ -122,13 +120,7 @@ class TextAssistant(object):
                                           self.deadline):
             assistant_helpers.log_assist_response_without_audio(resp)
             if resp.screen_out.data:
-                if self.display:
-                    html_response = resp.screen_out.data
-                soup = BeautifulSoup(resp.screen_out.data, "html.parser")
-                card_content = soup.find("div", id="assistant-card-content")
-                if card_content:
-                    card_content = BeautifulSoup(card_content.prettify(), "html.parser")
-                    text_response = re.sub(r"\s+", ' ', card_content.text.strip())
+                html_response = resp.screen_out.data
             if resp.dialog_state_out.conversation_state:
                 conversation_state = resp.dialog_state_out.conversation_state
                 self.conversation_state = conversation_state

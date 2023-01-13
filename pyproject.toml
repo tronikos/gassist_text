@@ -1,6 +1,6 @@
 [project]
 name = "gassist-text"
-version = "0.0.9"
+version = "0.0.10"
 authors = [
     { name="tronikos", email="tronikos@gmail.com" },
 ]
@@ -8,7 +8,6 @@ description = "A Python library for interacting with Google Assistant API via te
 readme = "README.md"
 requires-python = ">=3.7"
 dependencies = [
-    "beautifulsoup4>=4.1.2",
     "google-auth<3,>=0.3.0",
     "grpcio<2,>=1.48.0",
     "protobuf<5,>=3.20.0",
