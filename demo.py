@@ -1,7 +1,6 @@
 import os
 import logging
 import json
-import re
 import click
 import google.oauth2.credentials
 
@@ -87,8 +86,7 @@ def main(api_endpoint, credentials,
                 soup = BeautifulSoup(response_html, "html.parser")
                 card_content = soup.find("div", id="assistant-card-content")
                 if card_content:
-                    card_content = BeautifulSoup(card_content.prettify(), "html.parser")
-                    click.echo('<@assistant (parsed from html)> %s' % re.sub(r"\s+", ' ', card_content.text.strip()))
+                    click.echo("<@assistant (parsed from html)> %s" % card_content.get_text(separator="\n", strip=True))
                 system_browser.display(response_html, 'google-assistant-sdk-screen-out.html')
             if audio_response:
                 system_browser.display(audio_response, 'google-assistant-sdk-audio-out.mp3')
