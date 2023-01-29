@@ -83,10 +83,11 @@ def main(api_endpoint, credentials,
             if response_text:
                 click.echo('<@assistant> %s' % response_text)
             if response_html:
-                soup = BeautifulSoup(response_html, "html.parser")
-                card_content = soup.find("div", id="assistant-card-content")
+                html = BeautifulSoup(response_html, "html.parser")
+                card_content = html.find("div", id="assistant-card-content")
                 if card_content:
-                    click.echo("<@assistant (parsed from html)> %s" % card_content.get_text(separator="\n", strip=True))
+                    html = card_content
+                click.echo("<@assistant (parsed from html)> %s" % html.get_text(separator="\n", strip=True))
                 system_browser.display(response_html, 'google-assistant-sdk-screen-out.html')
             if audio_response:
                 system_browser.display(audio_response, 'google-assistant-sdk-audio-out.mp3')
