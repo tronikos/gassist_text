@@ -23,7 +23,7 @@ class SystemBrowser(object):
 
     def display(self, contents, filename):
         full_filename = os.path.join(self.tempdir, filename)
-        with open(full_filename, 'wb') as f:
+        with open(full_filename, "wb") as f:
             f.write(contents)
         webbrowser.open(full_filename, new=0)
 

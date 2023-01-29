@@ -29,18 +29,16 @@ import google.oauth2.credentials
 
 from google.assistant.embedded.v1alpha2 import (
     embedded_assistant_pb2,
-    embedded_assistant_pb2_grpc
+    embedded_assistant_pb2_grpc,
 )
 
 try:
-    from . import (
-        assistant_helpers,
-    )
+    from . import assistant_helpers
 except (SystemError, ImportError):
     import assistant_helpers
 
 
-ASSISTANT_API_ENDPOINT = 'embeddedassistant.googleapis.com'
+ASSISTANT_API_ENDPOINT = "embeddedassistant.googleapis.com"
 DEFAULT_GRPC_DEADLINE = 60 * 3 + 5
 PLAYING = embedded_assistant_pb2.ScreenOutConfig.PLAYING
 
@@ -59,9 +57,17 @@ class TextAssistant(object):
       api_endpoint: Address of Google Assistant API service.
     """
 
-    def __init__(self, credentials, language_code='en-US', device_model_id='default', device_id='default',
-                 display=False, audio_out=False,
-                 deadline_sec=DEFAULT_GRPC_DEADLINE, api_endpoint=ASSISTANT_API_ENDPOINT):
+    def __init__(
+        self,
+        credentials,
+        language_code="en-US",
+        device_model_id="default",
+        device_id="default",
+        display=False,
+        audio_out=False,
+        deadline_sec=DEFAULT_GRPC_DEADLINE,
+        api_endpoint=ASSISTANT_API_ENDPOINT,
+    ):
         self.language_code = language_code
         self.device_model_id = device_model_id
         self.device_id = device_id
@@ -72,10 +78,9 @@ class TextAssistant(object):
         self.audio_out = audio_out
         # Create an authorized gRPC channel.
         channel = google.auth.transport.grpc.secure_authorized_channel(
-            credentials, google.auth.transport.requests.Request(), api_endpoint)
-        self.assistant = embedded_assistant_pb2_grpc.EmbeddedAssistantStub(
-            channel
+            credentials, google.auth.transport.requests.Request(), api_endpoint
         )
+        self.assistant = embedded_assistant_pb2_grpc.EmbeddedAssistantStub(channel)
         self.deadline = deadline_sec
 
     def __enter__(self):
@@ -87,10 +92,11 @@ class TextAssistant(object):
 
     def assist(self, text_query):
         """Send a text request to the Assistant and return the response as a tuple of: [text, html, audio]."""
+
         def iter_assist_requests():
             config = embedded_assistant_pb2.AssistConfig(
                 audio_out_config=embedded_assistant_pb2.AudioOutConfig(
-                    encoding='MP3',
+                    encoding="MP3",
                     sample_rate_hertz=24000,
                     volume_percentage=100,
                 ),
@@ -115,9 +121,8 @@ class TextAssistant(object):
 
         text_response = None
         html_response = None
-        audio_response = b''
-        for resp in self.assistant.Assist(iter_assist_requests(),
-                                          self.deadline):
+        audio_response = b""
+        for resp in self.assistant.Assist(iter_assist_requests(), self.deadline):
             assistant_helpers.log_assist_response_without_audio(resp)
             if resp.screen_out.data:
                 html_response = resp.screen_out.data

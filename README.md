@@ -49,6 +49,11 @@ python -m pip install .
 python -m pip install grpcio-tools
 python -m grpc_tools.protoc -Isrc --python_out=src --grpc_python_out=src src/google/assistant/embedded/v1alpha2/embedded_assistant.proto
 
+# Run formatter
+python -m pip install isort black
+isort src/gassist_text tests demo.py browser_helpers.py
+black src/gassist_text tests demo.py browser_helpers.py
+
 # Run lint
 python -m pip install flake8
 flake8 src/gassist_text tests demo.py browser_helpers.py --count --select=E9,F63,F7,F82 --show-source --statistics
