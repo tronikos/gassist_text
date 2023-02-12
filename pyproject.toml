@@ -17,3 +17,7 @@ dependencies = [
 [project.urls]
 "Homepage" = "https://github.com/tronikos/gassist_text"
 "Bug Tracker" = "https://github.com/tronikos/gassist_text/issues"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
