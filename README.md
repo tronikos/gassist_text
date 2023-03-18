@@ -1,6 +1,6 @@
 # gassist_text
 
-A Python library for interacting with Google Assistant API via text
+A Python library for interacting with Google Assistant API via text.
 
 ## Credits
 
@@ -51,13 +51,13 @@ python -m grpc_tools.protoc -Isrc --python_out=src --grpc_python_out=src src/goo
 
 # Run formatter
 python -m pip install isort black
-isort src/gassist_text tests demo.py browser_helpers.py
-black src/gassist_text tests demo.py browser_helpers.py
+isort .
+black .
 
 # Run lint
-python -m pip install flake8
-flake8 src/gassist_text tests demo.py browser_helpers.py --count --select=E9,F63,F7,F82 --show-source --statistics
-flake8 src/gassist_text tests demo.py browser_helpers.py --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+python -m pip install flake8 ruff
+flake8 .
+ruff .
 
 # Run tests
 python -m pip install pytest

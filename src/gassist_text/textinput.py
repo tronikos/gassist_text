@@ -14,7 +14,7 @@
 
 """Implements a text client for the Google Assistant Service."""
 # Copied from:
-# https://github.com/googlesamples/assistant-sdk-python/blob/master/google-assistant-sdk/googlesamples/assistant/grpc/textinput.py # noqa
+# https://github.com/googlesamples/assistant-sdk-python/blob/master/google-assistant-sdk/googlesamples/assistant/grpc/textinput.py
 # Changes:
 # - Renamed class
 # - Simplified constructor:
@@ -43,19 +43,8 @@ DEFAULT_GRPC_DEADLINE = 60 * 3 + 5
 PLAYING = embedded_assistant_pb2.ScreenOutConfig.PLAYING
 
 
-class TextAssistant(object):
-    """Assistant that supports text based conversations.
-
-    Args:
-      credentials: OAuth2 credentials.
-      language_code: language for the conversation.
-      device_model_id: identifier of the device model.
-      device_id: identifier of the registered device instance.
-      display: enable visual display of assistant response.
-      audio_out: enable audio response.
-      deadline_sec: gRPC deadline in seconds for Google Assistant API call.
-      api_endpoint: Address of Google Assistant API service.
-    """
+class TextAssistant:
+    """Assistant that supports text based conversations."""
 
     def __init__(
         self,
@@ -68,6 +57,17 @@ class TextAssistant(object):
         deadline_sec=DEFAULT_GRPC_DEADLINE,
         api_endpoint=ASSISTANT_API_ENDPOINT,
     ):
+        """Initialize.
+
+        credentials: OAuth2 credentials.
+        language_code: language for the conversation.
+        device_model_id: identifier of the device model.
+        device_id: identifier of the registered device instance.
+        display: enable visual display of assistant response.
+        audio_out: enable audio response.
+        deadline_sec: gRPC deadline in seconds for Google Assistant API call.
+        api_endpoint: Address of Google Assistant API service.
+        """
         self.language_code = language_code
         self.device_model_id = device_model_id
         self.device_id = device_id
@@ -83,10 +83,10 @@ class TextAssistant(object):
         self.assistant = embedded_assistant_pb2_grpc.EmbeddedAssistantStub(channel)
         self.deadline = deadline_sec
 
-    def __enter__(self):
+    def __enter__(self):  # noqa: D105
         return self
 
-    def __exit__(self, etype, e, traceback):
+    def __exit__(self, etype, e, traceback):  # noqa: D105
         if e:
             return False
 

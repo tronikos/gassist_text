@@ -12,16 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Helpers for storing and opening HTML files."""
+
 import os.path
 import tempfile
 import webbrowser
 
 
-class SystemBrowser(object):
+class SystemBrowser:
+    """Class that can store HTML files in a temp directory and open them using the system Web browser."""
+
     def __init__(self):
+        """Initialize temp directory."""
         self.tempdir = tempfile.mkdtemp()
 
     def display(self, contents, filename):
+        """Store HTML contents in a file in the temp directory and open it."""
         full_filename = os.path.join(self.tempdir, filename)
         with open(full_filename, "wb") as f:
             f.write(contents)

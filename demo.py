@@ -1,10 +1,11 @@
+"""Command line interactive tool for TextAssistant."""
 import json
 import logging
 import os
 
+from bs4 import BeautifulSoup
 import click
 import google.oauth2.credentials
-from bs4 import BeautifulSoup
 
 from gassist_text import TextAssistant
 
@@ -39,10 +40,8 @@ DEFAULT_GRPC_DEADLINE = 60 * 3 + 5
     required=True,
     default="default",
     help=(
-        (
-            "Unique device model identifier, "
-            "if not specified, it is read from --device-config"
-        )
+        "Unique device model identifier, "
+        "if not specified, it is read from --device-config"
     ),
 )
 @click.option(
@@ -51,12 +50,10 @@ DEFAULT_GRPC_DEADLINE = 60 * 3 + 5
     required=True,
     default="default",
     help=(
-        (
-            "Unique registered device instance identifier, "
-            "if not specified, it is read from --device-config, "
-            "if no device_config found: a new device is registered "
-            "using a unique id and a new device config is saved"
-        )
+        "Unique registered device instance identifier, "
+        "if not specified, it is read from --device-config, "
+        "if no device_config found: a new device is registered "
+        "using a unique id and a new device config is saved"
     ),
 )
 @click.option(
@@ -81,7 +78,7 @@ DEFAULT_GRPC_DEADLINE = 60 * 3 + 5
     show_default=True,
     help="gRPC deadline in seconds",
 )
-def main(
+def _main(
     api_endpoint,
     credentials,
     device_model_id,
@@ -100,7 +97,7 @@ def main(
 
     # Load OAuth 2.0 credentials.
     try:
-        with open(credentials, "r") as f:
+        with open(credentials) as f:
             credentials = google.oauth2.credentials.Credentials(
                 token=None, **json.load(f)
             )
@@ -150,4 +147,4 @@ def main(
 
 
 if __name__ == "__main__":
-    main()
+    _main()
