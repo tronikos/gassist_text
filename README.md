@@ -24,12 +24,14 @@ with TextAssistant(credentials) as assistant:
 
 ## Limitations/Known issues
 
+If you see the issued commands in [My Google Activity](https://myactivity.google.com/myactivity) the library is working fine. If the commands don't have the expected outcome, don't open an issue in this repository. You should instead report the issue directly to Google [here](https://github.com/googlesamples/assistant-sdk-python/issues). Examples of known Google Assistant API issues:
 - Broadcast commands don't work unless speakers and device that runs this library are in the same network and IPv6 is disabled in the router
 - Most queries for media controls don't work
   - not working: e.g. play music on kitchen speaker, stop kitchen speaker
   - working: e.g. play news on kitchen speaker, play rain sounds on bedroom speaker
 - Routines don't work
-- Queries for personal results don't work
+
+To get personal results working you need to create an OAuth client ID of Desktop app, see step by step instructions [here](https://github.com/home-assistant/home-assistant.io/pull/26390/files).
 
 ## Development environment
 
