@@ -30,8 +30,9 @@ If you see the issued commands in [My Google Activity](https://myactivity.google
   - not working: e.g. play music on kitchen speaker, stop kitchen speaker
   - working: e.g. play news on kitchen speaker, play rain sounds on bedroom speaker
 - Routines don't work
+- Commands that need to verify your identity through voice match don't work
 
-To get personal results working you need to create an OAuth client ID of Desktop app, see step by step instructions [here](https://github.com/home-assistant/home-assistant.io/pull/26390/files).
+To get personal results working you need to create an OAuth client ID of Desktop app, see step by step instructions [here](https://github.com/home-assistant/home-assistant.io/pull/28621/files).
 
 ## Development environment
 
