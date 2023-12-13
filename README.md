@@ -25,6 +25,7 @@ with TextAssistant(credentials) as assistant:
 ## Limitations/Known issues
 
 If you see the issued commands in [My Google Activity](https://myactivity.google.com/myactivity) the library is working fine. If the commands don't have the expected outcome, don't open an issue in this repository. You should instead report the issue directly to Google [here](https://github.com/googlesamples/assistant-sdk-python/issues). Examples of known Google Assistant API issues:
+
 - Broadcast commands don't work unless speakers and device that runs this library are in the same network and IPv6 is disabled in the router
 - Most queries for media controls don't work
   - not working: e.g. play music on kitchen speaker, stop kitchen speaker
@@ -52,15 +53,14 @@ python -m pip install .
 python -m pip install grpcio-tools
 python -m grpc_tools.protoc -Isrc --python_out=src --grpc_python_out=src src/google/assistant/embedded/v1alpha2/embedded_assistant.proto
 
-# Run formatter
-python -m pip install isort black
-isort .
-black .
+# Run pre-commit
+python -m pip install pre-commit
+pre-commit install
+pre-commit run --all-files
 
-# Run lint
-python -m pip install flake8 ruff
-flake8 .
-ruff .
+# Alternative: run formatter, lint
+python -m pip install isort black flake8 ruff
+isort . ; black . ; flake8 . ; ruff . --fix
 
 # Run tests
 python -m pip install pytest

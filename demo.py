@@ -89,7 +89,7 @@ def _main(
     verbose,
     grpc_deadline,
     *args,
-    **kwargs
+    **kwargs,
 ):
     system_browser = browser_helpers.system_browser
     # Setup logging.
