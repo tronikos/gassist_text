@@ -11,7 +11,7 @@ requires-python = ">=3.7"
 dependencies = [
     "google-auth<3,>=0.3.0",
     "grpcio<2,>=1.48.0",
-    "protobuf<5,>=3.20.0",
+    "protobuf<6,>=3.20.0",
     "requests<3,>=2.20.0",
 ]
 
