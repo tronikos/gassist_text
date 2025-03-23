@@ -1,6 +1,6 @@
 [project]
 name = "gassist-text"
-version = "0.0.11"
+version = "0.0.12"
 license = {text = "Apache-2.0"}
 authors = [
     { name="tronikos", email="tronikos@gmail.com" },
@@ -9,10 +9,10 @@ description = "A Python library for interacting with Google Assistant API via te
 readme = "README.md"
 requires-python = ">=3.7"
 dependencies = [
-    "google-auth<3,>=0.3.0",
-    "grpcio<2,>=1.48.0",
-    "protobuf<6,>=3.20.0",
-    "requests<3,>=2.20.0",
+    "google-auth>=0.3.0",
+    "grpcio>=1.48.0",
+    "protobuf>=3.20.0",
+    "requests>=2.20.0",
 ]
 
 [project.urls]
