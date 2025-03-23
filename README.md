@@ -55,12 +55,13 @@ python -m grpc_tools.protoc -Isrc --python_out=src --grpc_python_out=src src/goo
 
 # Run pre-commit
 python -m pip install pre-commit
+pre-commit autoupdate
 pre-commit install
 pre-commit run --all-files
 
 # Alternative: run formatter, lint
 python -m pip install isort black flake8 ruff
-isort . ; black . ; flake8 . ; ruff . --fix
+isort . ; black . ; flake8 . ; ruff check . --fix
 
 # Run tests
 python -m pip install pytest

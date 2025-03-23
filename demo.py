@@ -1,4 +1,5 @@
 """Command line interactive tool for TextAssistant."""
+
 import json
 import logging
 import os
@@ -104,7 +105,7 @@ def _main(
             http_request = google.auth.transport.requests.Request()
             credentials.refresh(http_request)
     except Exception as e:
-        logging.error("Error loading credentials: %s", e)
+        logging.error(f"Error loading credentials: {e}")
         logging.error(
             "Run google-oauthlib-tool to initialize " "new OAuth 2.0 credentials."
         )
@@ -122,20 +123,19 @@ def _main(
     ) as assistant:
         while True:
             query = click.prompt("")
-            click.echo("<you> %s" % query)
+            click.echo(f"<you> {query}")
             response_text, response_html, audio_response = assistant.assist(
                 text_query=query
             )
             if response_text:
-                click.echo("<@assistant> %s" % response_text)
+                click.echo(f"<@assistant> {response_text}")
             if response_html:
                 html = BeautifulSoup(response_html, "html.parser")
                 card_content = html.find("div", id="assistant-card-content")
                 if card_content:
                     html = card_content
                 click.echo(
-                    "<@assistant (parsed from html)> %s"
-                    % html.get_text(separator="\n", strip=True)
+                    f"<@assistant (parsed from html)> {html.get_text(separator="\n", strip=True)}"
                 )
                 system_browser.display(
                     response_html, "google-assistant-sdk-screen-out.html"
