@@ -1,13 +1,13 @@
 [project]
 name = "gassist-text"
-version = "0.0.12"
-license = {text = "Apache-2.0"}
+version = "0.0.13"
+license = "Apache-2.0"
 authors = [
     { name="tronikos", email="tronikos@gmail.com" },
 ]
 description = "A Python library for interacting with Google Assistant API via text"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.11"
 dependencies = [
     "google-auth>=0.3.0",
     "grpcio>=1.48.0",
@@ -37,8 +37,7 @@ target-version = "py311"
 exclude = ["*_pb2.py", "*_pb2_grpc.py", "*.pyi"]
 line-length = 127
 
-[tool.ruff.lint]
-select = [
+lint.select = [
     "B007", # Loop control variable {name} not used within loop body
     "B014", # Exception handler with duplicate exception
     "C",  # complexity
@@ -62,7 +61,7 @@ select = [
     "W",  # pycodestyle
 ]
 
-ignore = [
+lint.ignore = [
     "D203",  # 1 blank line required before class docstring
     "D213",  # Multi-line docstring summary should start at the second line
     # keep-runtime-annotations

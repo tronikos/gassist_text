@@ -3,18 +3,15 @@
 import json
 import logging
 import os
+from typing import Any
 
 from bs4 import BeautifulSoup
 import click
+import google.auth.transport.requests
 import google.oauth2.credentials
 
+import browser_helpers
 from gassist_text import TextAssistant
-
-try:
-    from . import browser_helpers
-except (SystemError, ImportError):
-    import browser_helpers
-
 
 ASSISTANT_API_ENDPOINT = "embeddedassistant.googleapis.com"
 DEFAULT_GRPC_DEADLINE = 60 * 3 + 5
@@ -80,18 +77,19 @@ DEFAULT_GRPC_DEADLINE = 60 * 3 + 5
     help="gRPC deadline in seconds",
 )
 def _main(
-    api_endpoint,
-    credentials,
-    device_model_id,
-    device_id,
-    lang,
-    display,
-    audio_out,
-    verbose,
-    grpc_deadline,
-    *args,
-    **kwargs,
-):
+    api_endpoint: str,
+    credentials: str,
+    device_model_id: str,
+    device_id: str,
+    lang: str,
+    display: bool,
+    audio_out: bool,
+    verbose: bool,
+    grpc_deadline: int,
+    *args: Any,
+    **kwargs: Any,
+) -> None:
+    """Run a command-line-based conversations with the Google Assistant."""
     system_browser = browser_helpers.system_browser
     # Setup logging.
     logging.basicConfig(level=logging.DEBUG if verbose else logging.INFO)
@@ -99,11 +97,11 @@ def _main(
     # Load OAuth 2.0 credentials.
     try:
         with open(credentials) as f:
-            credentials = google.oauth2.credentials.Credentials(
+            credentials_obj = google.oauth2.credentials.Credentials(
                 token=None, **json.load(f)
             )
             http_request = google.auth.transport.requests.Request()
-            credentials.refresh(http_request)
+            credentials_obj.refresh(http_request)
     except Exception as e:
         logging.error(f"Error loading credentials: {e}")
         logging.error(
@@ -112,7 +110,7 @@ def _main(
         return
 
     with TextAssistant(
-        credentials,
+        credentials_obj,
         lang,
         device_model_id,
         device_id,
@@ -122,7 +120,7 @@ def _main(
         api_endpoint,
     ) as assistant:
         while True:
-            query = click.prompt("")
+            query = click.prompt("", type=str)
             click.echo(f"<you> {query}")
             response_text, response_html, audio_response = assistant.assist(
                 text_query=query
@@ -130,13 +128,11 @@ def _main(
             if response_text:
                 click.echo(f"<@assistant> {response_text}")
             if response_html:
-                html = BeautifulSoup(response_html, "html.parser")
-                card_content = html.find("div", id="assistant-card-content")
-                if card_content:
-                    html = card_content
-                click.echo(
-                    f"<@assistant (parsed from html)> {html.get_text(separator="\n", strip=True)}"
-                )
+                soup = BeautifulSoup(response_html, "html.parser")
+                card_content = soup.find("div", id="assistant-card-content")
+                text_source = card_content if card_content else soup
+                html_text = text_source.get_text(separator="\n", strip=True)
+                click.echo(f"<@assistant (parsed from html)> {html_text}")
                 system_browser.display(
                     response_html, "google-assistant-sdk-screen-out.html"
                 )

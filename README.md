@@ -24,7 +24,7 @@ with TextAssistant(credentials) as assistant:
 
 ## Limitations/Known issues
 
-If you see the issued commands in [My Google Activity](https://myactivity.google.com/myactivity) the library is working fine. If the commands don't have the expected outcome, don't open an issue in this repository. You should instead report the issue directly to Google [here](https://github.com/googlesamples/assistant-sdk-python/issues). Examples of known Google Assistant API issues:
+If you see the issued commands in [My Google Activity](https://myactivity.google.com/myactivity) the library is working fine. If the commands don't have the expected outcome, don't open an issue in this repository. You should instead report the issue directly to [Google](https://github.com/googlesamples/assistant-sdk-python/issues). Examples of known Google Assistant API issues:
 
 - Broadcast commands don't work unless speakers and device that runs this library are in the same network and IPv6 is disabled in the router
 - Most queries for media controls don't work
@@ -33,7 +33,7 @@ If you see the issued commands in [My Google Activity](https://myactivity.google
 - Routines don't work
 - Commands that need to verify your identity through voice match don't work
 
-To get personal results working you need to create an OAuth client ID of Desktop app, see step by step instructions [here](https://www.home-assistant.io/integrations/google_assistant_sdk/#enable-personal-results-for-advanced-users).
+To get personal results working you need to create an OAuth client ID of Desktop app, see step by step instructions [in this article](https://www.home-assistant.io/integrations/google_assistant_sdk/#enable-personal-results-for-advanced-users).
 
 ## Development environment
 
@@ -47,7 +47,7 @@ source .venv/bin/activate
 
 # Install dependencies
 python -m pip install --upgrade pip
-python -m pip install .
+python -m pip install -e .
 
 # Generate embedded_assistant_pb2.py and embedded_assistant_pb2_grpc.py
 python -m pip install grpcio-tools

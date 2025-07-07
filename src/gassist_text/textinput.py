@@ -22,6 +22,9 @@
 #   - Moved creation of the authorized gRPC channel in the constructor
 # - Return audio response as mp3
 # - Extracted command line tool to demo.py
+# - Added strict typing with mypy
+
+from collections.abc import Generator
 
 import google.auth.transport.grpc
 import google.auth.transport.requests
@@ -32,11 +35,7 @@ from google.assistant.embedded.v1alpha2 import (
     embedded_assistant_pb2_grpc,
 )
 
-try:
-    from . import assistant_helpers
-except (SystemError, ImportError):
-    import assistant_helpers
-
+from . import assistant_helpers
 
 ASSISTANT_API_ENDPOINT = "embeddedassistant.googleapis.com"
 DEFAULT_GRPC_DEADLINE = 60 * 3 + 5
@@ -48,15 +47,15 @@ class TextAssistant:
 
     def __init__(
         self,
-        credentials,
-        language_code="en-US",
-        device_model_id="default",
-        device_id="default",
-        display=False,
-        audio_out=False,
-        deadline_sec=DEFAULT_GRPC_DEADLINE,
-        api_endpoint=ASSISTANT_API_ENDPOINT,
-    ):
+        credentials: google.oauth2.credentials.Credentials,
+        language_code: str = "en-US",
+        device_model_id: str = "default",
+        device_id: str = "default",
+        display: bool = False,
+        audio_out: bool = False,
+        deadline_sec: int = DEFAULT_GRPC_DEADLINE,
+        api_endpoint: str = ASSISTANT_API_ENDPOINT,
+    ) -> None:
         """Initialize.
 
         credentials: OAuth2 credentials.
@@ -71,7 +70,7 @@ class TextAssistant:
         self.language_code = language_code
         self.device_model_id = device_model_id
         self.device_id = device_id
-        self.conversation_state = None
+        self.conversation_state: bytes | None = None
         # Force reset of first conversation.
         self.is_new_conversation = True
         self.display = display
@@ -83,17 +82,22 @@ class TextAssistant:
         self.assistant = embedded_assistant_pb2_grpc.EmbeddedAssistantStub(channel)
         self.deadline = deadline_sec
 
-    def __enter__(self):  # noqa: D105
+    def __enter__(self) -> "TextAssistant":  # noqa: D105
         return self
 
-    def __exit__(self, etype, e, traceback):  # noqa: D105
+    def __exit__(  # noqa: D105
+        self, etype: object, e: object, traceback: object
+    ) -> bool:
         if e:
             return False
+        return True
 
-    def assist(self, text_query):
+    def assist(self, text_query: str) -> tuple[str | None, bytes | None, bytes]:
         """Send a text request to the Assistant and return the response as a tuple of: [text, html, audio]."""
 
-        def iter_assist_requests():
+        def iter_assist_requests() -> (
+            Generator[embedded_assistant_pb2.AssistRequest, None, None]
+        ):
             config = embedded_assistant_pb2.AssistConfig(
                 audio_out_config=embedded_assistant_pb2.AudioOutConfig(
                     encoding="MP3",
@@ -119,8 +123,8 @@ class TextAssistant:
             assistant_helpers.log_assist_request_without_audio(req)
             yield req
 
-        text_response = None
-        html_response = None
+        text_response: str | None = None
+        html_response: bytes | None = None
         audio_response = b""
         for resp in self.assistant.Assist(iter_assist_requests(), self.deadline):
             assistant_helpers.log_assist_response_without_audio(resp)
