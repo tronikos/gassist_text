@@ -1,6 +1,6 @@
 [project]
 name = "gassist-text"
-version = "0.0.13"
+version = "0.0.14"
 license = "Apache-2.0"
 authors = [
     { name="tronikos", email="tronikos@gmail.com" },

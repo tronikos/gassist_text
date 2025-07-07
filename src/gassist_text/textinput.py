@@ -92,7 +92,7 @@ class TextAssistant:
             return False
         return True
 
-    def assist(self, text_query: str) -> tuple[str | None, bytes | None, bytes]:
+    def assist(self, text_query: str) -> tuple[str, bytes | None, bytes]:
         """Send a text request to the Assistant and return the response as a tuple of: [text, html, audio]."""
 
         def iter_assist_requests() -> (
@@ -123,7 +123,7 @@ class TextAssistant:
             assistant_helpers.log_assist_request_without_audio(req)
             yield req
 
-        text_response: str | None = None
+        text_response: str = ""
         html_response: bytes | None = None
         audio_response = b""
         for resp in self.assistant.Assist(iter_assist_requests(), self.deadline):
