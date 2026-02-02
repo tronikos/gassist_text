@@ -13,6 +13,7 @@
 # limitations under the License.
 
 """Implements a text client for the Google Assistant Service."""
+
 # Copied from:
 # https://github.com/googlesamples/assistant-sdk-python/blob/master/google-assistant-sdk/googlesamples/assistant/grpc/textinput.py
 # Changes:
