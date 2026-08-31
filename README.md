@@ -22,6 +22,40 @@ with TextAssistant(credentials) as assistant:
     print(assistant.assist('another one')[0])
 ```
 
+### Async example
+
+`TextAssistantAsync` is the asyncio equivalent of `TextAssistant`. It has the same
+constructor and returns the same `(text, html, audio)` tuple, but `assist()` is a
+coroutine and nothing blocks the event loop.
+
+```python
+import asyncio
+import json
+import google.oauth2.credentials
+from gassist_text import TextAssistantAsync
+
+with open('/path/to/credentials.json', 'r') as f:
+    credentials = google.oauth2.credentials.Credentials(token=None, **json.load(f))
+
+async def main():
+    async with TextAssistantAsync(credentials) as assistant:
+        print((await assistant.assist('tell me a joke'))[0])
+        print((await assistant.assist('another one'))[0])
+
+asyncio.run(main())
+```
+
+Notes:
+
+- It is built on [`grpc.aio`](https://grpc.github.io/grpc/python/grpc_asyncio.html),
+  which ships with `grpcio`; no extra dependency is needed.
+- The gRPC channel is created on the first `assist()` call, so it binds to the event
+  loop that actually uses it. Constructing the object outside of a running loop is fine.
+- Refreshing the OAuth2 access token is blocking, but gRPC calls the auth metadata
+  plugin on its own thread, so the event loop is not blocked.
+- Neither class is safe for concurrent use: both keep the conversation state of a
+  single conversation. Use one instance per conversation, or serialize the calls.
+
 ## Limitations/Known issues
 
 If you see the issued commands in [My Google Activity](https://myactivity.google.com/myactivity) the library is working fine. If the commands don't have the expected outcome, don't open an issue in this repository. You should instead report the issue directly to [Google](https://github.com/googlesamples/assistant-sdk-python/issues). Examples of known Google Assistant API issues:
@@ -70,6 +104,8 @@ pytest
 # Run command line interactive tool
 python -m pip install click beautifulsoup4
 python demo.py --display --audio_out
+# ... or exercise the asyncio client
+python demo.py --display --audio_out --use-async
 
 # Build package
 python -m pip install build
