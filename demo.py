@@ -1,5 +1,6 @@
 """Command line interactive tool for TextAssistant."""
 
+import asyncio
 import json
 import logging
 import os
@@ -11,7 +12,7 @@ import google.auth.transport.requests
 import google.oauth2.credentials
 
 import browser_helpers
-from gassist_text import TextAssistant
+from gassist_text import TextAssistant, TextAssistantAsync
 
 ASSISTANT_API_ENDPOINT = "embeddedassistant.googleapis.com"
 DEFAULT_GRPC_DEADLINE = 60 * 3 + 5
@@ -68,6 +69,12 @@ DEFAULT_GRPC_DEADLINE = 60 * 3 + 5
     help="Enable visual display of Assistant responses in HTML.",
 )
 @click.option("--audio_out", is_flag=True, default=False, help="Enable audio response.")
+@click.option(
+    "--use-async",
+    is_flag=True,
+    default=False,
+    help="Use the asyncio client, TextAssistantAsync.",
+)
 @click.option("--verbose", "-v", is_flag=True, default=False, help="Verbose logging.")
 @click.option(
     "--grpc-deadline",
@@ -84,13 +91,13 @@ def _main(
     lang: str,
     display: bool,
     audio_out: bool,
+    use_async: bool,
     verbose: bool,
     grpc_deadline: int,
     *args: Any,
     **kwargs: Any,
 ) -> None:
     """Run a command-line-based conversations with the Google Assistant."""
-    system_browser = browser_helpers.system_browser
     # Setup logging.
     logging.basicConfig(level=logging.DEBUG if verbose else logging.INFO)
 
@@ -109,7 +116,7 @@ def _main(
         )
         return
 
-    with TextAssistant(
+    assistant_args = (
         credentials_obj,
         lang,
         device_model_id,
@@ -118,28 +125,48 @@ def _main(
         audio_out,
         grpc_deadline,
         api_endpoint,
-    ) as assistant:
-        while True:
-            query = click.prompt("", type=str)
-            click.echo(f"<you> {query}")
-            response_text, response_html, audio_response = assistant.assist(
-                text_query=query
-            )
-            if response_text:
-                click.echo(f"<@assistant> {response_text}")
-            if response_html:
-                soup = BeautifulSoup(response_html, "html.parser")
-                card_content = soup.find("div", id="assistant-card-content")
-                text_source = card_content if card_content else soup
-                html_text = text_source.get_text(separator="\n", strip=True)
-                click.echo(f"<@assistant (parsed from html)> {html_text}")
-                system_browser.display(
-                    response_html, "google-assistant-sdk-screen-out.html"
-                )
-            if audio_response:
-                system_browser.display(
-                    audio_response, "google-assistant-sdk-audio-out.mp3"
-                )
+    )
+    if use_async:
+
+        async def run_async() -> None:
+            async with TextAssistantAsync(*assistant_args) as assistant:
+                while True:
+                    query = _prompt()
+                    _show(await assistant.assist(text_query=query))
+
+        asyncio.run(run_async())
+    else:
+        with TextAssistant(*assistant_args) as assistant:
+            while True:
+                query = _prompt()
+                _show(assistant.assist(text_query=query))
+
+
+def _prompt() -> str:
+    """Read the next query from the user."""
+    query: str = click.prompt("", type=str)
+    click.echo(f"<you> {query}")
+    return query
+
+
+def _show(response: tuple[str, bytes | None, bytes]) -> None:
+    """Print an assist response and open its HTML and audio parts, if any."""
+    response_text, response_html, audio_response = response
+    if response_text:
+        click.echo(f"<@assistant> {response_text}")
+    if response_html:
+        soup = BeautifulSoup(response_html, "html.parser")
+        card_content = soup.find("div", id="assistant-card-content")
+        text_source = card_content if card_content else soup
+        html_text = text_source.get_text(separator="\n", strip=True)
+        click.echo(f"<@assistant (parsed from html)> {html_text}")
+        browser_helpers.system_browser.display(
+            response_html, "google-assistant-sdk-screen-out.html"
+        )
+    if audio_response:
+        browser_helpers.system_browser.display(
+            audio_response, "google-assistant-sdk-audio-out.mp3"
+        )
 
 
 if __name__ == "__main__":
