@@ -83,9 +83,10 @@ source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -e .
 
-# Generate embedded_assistant_pb2.py and embedded_assistant_pb2_grpc.py
-python -m pip install grpcio-tools
-python -m grpc_tools.protoc -Isrc --python_out=src --grpc_python_out=src src/google/assistant/embedded/v1alpha2/embedded_assistant.proto
+# Generate embedded_assistant_pb2.py and embedded_assistant_pb2_grpc.py,
+# and the .pyi type stubs that let mypy check the protobuf messages
+python -m pip install grpcio-tools mypy-protobuf
+python -m grpc_tools.protoc -Isrc --python_out=src --grpc_python_out=src --mypy_out=src --mypy_grpc_out=src src/google/assistant/embedded/v1alpha2/embedded_assistant.proto
 
 # Run pre-commit
 python -m pip install pre-commit
