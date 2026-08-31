@@ -24,8 +24,10 @@
 # - Return audio response as mp3
 # - Extracted command line tool to demo.py
 # - Added strict typing with mypy
+# - Close the gRPC channel when the assistant is closed
 
 from collections.abc import Generator
+from types import TracebackType
 
 import google.auth.transport.grpc
 import google.auth.transport.requests
@@ -77,21 +79,26 @@ class TextAssistant:
         self.display = display
         self.audio_out = audio_out
         # Create an authorized gRPC channel.
-        channel = google.auth.transport.grpc.secure_authorized_channel(
+        self.channel = google.auth.transport.grpc.secure_authorized_channel(
             credentials, google.auth.transport.requests.Request(), api_endpoint
         )
-        self.assistant = embedded_assistant_pb2_grpc.EmbeddedAssistantStub(channel)
+        self.assistant = embedded_assistant_pb2_grpc.EmbeddedAssistantStub(self.channel)
         self.deadline = deadline_sec
 
     def __enter__(self) -> "TextAssistant":  # noqa: D105
         return self
 
     def __exit__(  # noqa: D105
-        self, etype: object, e: object, traceback: object
-    ) -> bool:
-        if e:
-            return False
-        return True
+        self,
+        etype: type[BaseException] | None,
+        e: BaseException | None,
+        traceback: TracebackType | None,
+    ) -> None:
+        self.close()
+
+    def close(self) -> None:
+        """Close the underlying gRPC channel."""
+        self.channel.close()
 
     def assist(self, text_query: str) -> tuple[str, bytes | None, bytes]:
         """Send a text request to the Assistant and return the response as a tuple of: [text, html, audio]."""
