@@ -12,7 +12,9 @@ import pytest
 @pytest.fixture
 def credentials() -> google.oauth2.credentials.Credentials:
     """Return credentials that are never actually used to authenticate."""
-    return google.oauth2.credentials.Credentials(token="fake-token")
+    return google.oauth2.credentials.Credentials(  # type: ignore[no-untyped-call]
+        token="fake-token"
+    )
 
 
 @pytest.fixture

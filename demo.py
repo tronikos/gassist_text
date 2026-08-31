@@ -104,11 +104,11 @@ def _main(
     # Load OAuth 2.0 credentials.
     try:
         with open(credentials) as f:
-            credentials_obj = google.oauth2.credentials.Credentials(
+            credentials_obj = google.oauth2.credentials.Credentials(  # type: ignore[no-untyped-call]
                 token=None, **json.load(f)
             )
             http_request = google.auth.transport.requests.Request()
-            credentials_obj.refresh(http_request)
+            credentials_obj.refresh(http_request)  # type: ignore[no-untyped-call]
     except Exception as e:
         logging.error(f"Error loading credentials: {e}")
         logging.error(

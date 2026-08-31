@@ -52,10 +52,16 @@ repos:
           --explicit-package-bases,
         ]
         additional_dependencies: [
+          beautifulsoup4,
+          click,
+          google-auth,
+          grpc-stubs,
+          grpcio,
+          protobuf,
+          pytest,
+          types-beautifulsoup4,
           types-protobuf,
           types-requests,
-          types-beautifulsoup4,
-          click,
         ]
   - repo: https://github.com/asottile/pyupgrade
     rev: v3.21.2

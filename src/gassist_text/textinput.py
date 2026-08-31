@@ -95,13 +95,13 @@ class _TextAssistantBase:
         """
         config = embedded_assistant_pb2.AssistConfig(
             audio_out_config=embedded_assistant_pb2.AudioOutConfig(
-                encoding="MP3",
+                encoding=embedded_assistant_pb2.AudioOutConfig.MP3,
                 sample_rate_hertz=24000,
                 volume_percentage=100,
             ),
             dialog_state_in=embedded_assistant_pb2.DialogStateIn(
                 language_code=self.language_code,
-                conversation_state=self.conversation_state,
+                conversation_state=self.conversation_state or b"",
                 is_new_conversation=self.is_new_conversation,
             ),
             device_config=embedded_assistant_pb2.DeviceConfig(
@@ -143,7 +143,7 @@ def _create_channel_credentials(
     that it can also be used with :mod:`grpc.aio`, for which google-auth does
     not provide a helper.
     """
-    metadata_plugin = google.auth.transport.grpc.AuthMetadataPlugin(
+    metadata_plugin = google.auth.transport.grpc.AuthMetadataPlugin(  # type: ignore[no-untyped-call]
         credentials, google.auth.transport.requests.Request()
     )
     return grpc.composite_channel_credentials(
@@ -181,7 +181,7 @@ class TextAssistant(_TextAssistantBase):
             language_code, device_model_id, device_id, display, audio_out, deadline_sec
         )
         # Create an authorized gRPC channel.
-        self.channel = google.auth.transport.grpc.secure_authorized_channel(
+        self.channel = google.auth.transport.grpc.secure_authorized_channel(  # type: ignore[no-untyped-call]
             credentials, google.auth.transport.requests.Request(), api_endpoint
         )
         self.assistant = embedded_assistant_pb2_grpc.EmbeddedAssistantStub(self.channel)
@@ -280,7 +280,7 @@ class TextAssistantAsync(_TextAssistantBase):
         """Close the underlying gRPC channel, if one was opened."""
         async with self._lock:
             if self._channel is not None:
-                await self._channel.close()
+                await self._channel.close(None)
                 self._channel = None
 
     async def assist(self, text_query: str) -> tuple[str, bytes | None, bytes]:
