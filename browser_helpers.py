@@ -23,11 +23,13 @@ class SystemBrowser:
     """Class that can store HTML files in a temp directory and open them using the system Web browser."""
 
     def __init__(self) -> None:
-        """Initialize temp directory."""
-        self.tempdir = tempfile.mkdtemp()
+        """Initialize temp directory lazily."""
+        self.tempdir: str | None = None
 
     def display(self, contents: bytes, filename: str) -> None:
         """Store HTML contents in a file in the temp directory and open it."""
+        if self.tempdir is None:
+            self.tempdir = tempfile.mkdtemp()
         full_filename = os.path.join(self.tempdir, filename)
         with open(full_filename, "wb") as f:
             f.write(contents)
